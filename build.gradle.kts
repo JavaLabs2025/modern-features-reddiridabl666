@@ -1,5 +1,18 @@
 plugins {
     id("java")
+    id("application")
+
+    id("io.freefair.lombok") version "9.1.0"
+}
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(25))
+  }
+}
+
+application {
+    mainClass = "org.lab.Main"
 }
 
 group = "org.lab"
