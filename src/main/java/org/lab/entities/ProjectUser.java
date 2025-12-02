@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ProjectUser {
-    private final UUID id;
+    private final UUID projectId;
+    private final UUID userId;
     private final Role role;
 }
