@@ -16,6 +16,7 @@ import org.lab.entities.Role;
 import org.lab.entities.User;
 import org.lab.exceptions.IllegalStatusException;
 import org.lab.exceptions.NoAccessException;
+import org.lab.exceptions.NotFoundException;
 import org.lab.entities.BugReport.Status;
 import org.lab.services.AccessControlService;
 import org.lab.services.BugReportService;
@@ -34,7 +35,7 @@ public class BugReportServiceImpl implements BugReportService {
 
     private final AccessControlService accessControlService;
 
-    BugReportServiceImpl(ProjectService projectService, AccessControlService accessControlService) {
+    public BugReportServiceImpl(ProjectService projectService, AccessControlService accessControlService) {
         this.projectService = projectService;
         this.accessControlService = accessControlService;
     }
@@ -44,8 +45,8 @@ public class BugReportServiceImpl implements BugReportService {
         var projectUsers = projectService.listProjectsByUser(userId);
 
         var projectIds = projectUsers.stream()
-                .filter(item -> item.getRole() == Role.Developer)
-                .map(item -> item.getProjectId())
+                .filter(item -> item.role() == Role.Developer)
+                .map(item -> item.projectId())
                 .toList();
 
         return bugReports.values().stream()
@@ -64,7 +65,7 @@ public class BugReportServiceImpl implements BugReportService {
     public Status getBugReportStatus(User user, UUID reportId) {
         var bugReport = bugReports.get(reportId);
         if (bugReport == null) {
-            throw new RuntimeException("not found");
+            throw new NotFoundException();
         }
 
         checkAccess(user.getId(), bugReport.getProjectId(), READ);
@@ -76,7 +77,7 @@ public class BugReportServiceImpl implements BugReportService {
     public void setBugReportStatus(User user, UUID reportId, Status status) {
         var bugReport = bugReports.get(reportId);
         if (bugReport == null) {
-            throw new RuntimeException("not found");
+            throw new NotFoundException();
         }
 
         checkAccess(user.getId(), bugReport.getProjectId(), UPDATE_STATUS);

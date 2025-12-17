@@ -11,7 +11,7 @@ public interface TicketService {
 
     List<Ticket> listTicketsByMilestone(UUID milestoneId);
 
-    void create(User user, Ticket ticket);
+    Ticket create(User user, UUID projectId, UUID milestoneId, String name);
 
     void assignTicket(User user, UUID ticketId, UUID developerId);
 

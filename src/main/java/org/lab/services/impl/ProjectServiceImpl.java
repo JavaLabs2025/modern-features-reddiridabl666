@@ -14,52 +14,71 @@ import org.lab.entities.ProjectUser;
 import org.lab.entities.Role;
 import org.lab.entities.User;
 import org.lab.exceptions.NoAccessException;
+import org.lab.exceptions.NotFoundException;
 import org.lab.services.ProjectService;
+import org.lab.services.UserService;
 
 public class ProjectServiceImpl implements ProjectService {
     private final Map<UUID, Project> projects = new HashMap<>();
 
+    private final UserService userService;
+
+    public ProjectServiceImpl(UserService userService) {
+        this.userService = userService;
+    }
+
     @Override
-    public Project create(User user) {
+    public Project create(User user, String name) {
         var projectId = UUID.randomUUID();
 
-        var project = new Project(projectId, user.getId());
+        var project = new Project(projectId, user.getId(), name);
+        project.addUser(new ProjectUser(projectId, user.getId(), Role.Manager));
+
         projects.put(projectId, project);
 
         return project;
     }
 
     @Override
-    public void addUser(User requester, UUID projectId, ProjectUser user) {
-        if (user.getRole() == Role.Manager) {
+    public void addUser(User requester, UUID projectId, UUID userId, Role role) {
+        if (role == Role.Manager) {
             throw new IllegalArgumentException("Manager role is not supported");
         }
 
         var project = projects.get(projectId);
         if (project == null) {
-            throw new RuntimeException("not found");
+            throw new NotFoundException();
         }
 
-        var teamleadsCount = project.getUsers().stream()
-                .filter(projectUser -> projectUser.getRole() == Role.Teamlead)
-                .count();
+        boolean userExists = userService.listUsers().stream()
+                .filter(user -> user.getId().equals(userId))
+                .findFirst()
+                .isPresent();
 
-        if (user.getRole() == Role.Teamlead && teamleadsCount > 0) {
-            throw new IllegalArgumentException("Only one teamlead allowed for project");
+        if (!userExists) {
+            throw new NotFoundException();
         }
 
         if (!project.getCreatedBy().equals(requester.getId())) {
             throw new NoAccessException(PROJECT, UPDATE, projectId);
         }
 
-        project.addUser(user);
+        var teamleadsCount = project.getUsers().stream()
+                .filter(projectUser -> projectUser.role() == Role.Teamlead)
+                .count();
+
+        if (role == Role.Teamlead && teamleadsCount > 0) {
+            throw new IllegalArgumentException("Only one teamlead allowed for project");
+        }
+
+        project.addUser(new ProjectUser(projectId, userId, role));
     }
 
     @Override
     public List<ProjectUser> listUsersByProject(UUID projectId) {
         var project = projects.get(projectId);
         if (project == null) {
-            throw new RuntimeException("not found");
+            throw new NotFoundException();
         }
 
         return project.getUsers();
@@ -71,7 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         projects.values().stream()
                 .flatMap(project -> project.getUsers().stream())
-                .filter(user -> user.getUserId().equals(userId))
+                .filter(user -> user.userId().equals(userId))
                 .findFirst()
                 .ifPresent(user -> result.add(user));
 

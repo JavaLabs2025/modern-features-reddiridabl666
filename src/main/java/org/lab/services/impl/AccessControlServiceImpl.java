@@ -23,39 +23,35 @@ import static org.lab.entities.EntityType.BUG_REPORT;
 public class AccessControlServiceImpl implements AccessControlService {
     private static final Map<Role, Map<EntityType, Set<Action>>> roleModel = Map.of(
             Role.Teamlead, Map.of(
-                MILESTONE, Set.of(READ),
-                BUG_REPORT, Set.of(READ),
-                TICKET, Set.of(CREATE, READ, UPDATE, UPDATE_STATUS)
-            ),
+                    MILESTONE, Set.of(READ),
+                    BUG_REPORT, Set.of(READ),
+                    TICKET, Set.of(CREATE, READ, UPDATE, UPDATE_STATUS)),
             Role.Manager, Map.of(
-                MILESTONE, Set.of(CREATE, READ, UPDATE, UPDATE_STATUS),
-                BUG_REPORT, Set.of(READ),
-                TICKET, Set.of(CREATE, READ, UPDATE, UPDATE_STATUS)
-            ),
+                    MILESTONE, Set.of(CREATE, READ, UPDATE, UPDATE_STATUS),
+                    BUG_REPORT, Set.of(READ),
+                    TICKET, Set.of(CREATE, READ, UPDATE, UPDATE_STATUS)),
             Role.Developer, Map.of(
-                MILESTONE, Set.of(READ),
-                TICKET, Set.of(READ, UPDATE_STATUS),
-                BUG_REPORT, Set.of(CREATE, READ, UPDATE_STATUS)
-            ),
+                    MILESTONE, Set.of(READ),
+                    TICKET, Set.of(READ, UPDATE_STATUS),
+                    BUG_REPORT, Set.of(CREATE, READ, UPDATE_STATUS)),
             Role.QA, Map.of(
-                MILESTONE, Set.of(READ),
-                TICKET, Set.of(READ),
-                BUG_REPORT, Set.of(CREATE, READ, UPDATE_STATUS)
-            ));
+                    MILESTONE, Set.of(READ),
+                    TICKET, Set.of(READ),
+                    BUG_REPORT, Set.of(CREATE, READ, UPDATE_STATUS)));
 
     private final ProjectService projectService;
-    
-    AccessControlServiceImpl(ProjectService projectService) {
+
+    public AccessControlServiceImpl(ProjectService projectService) {
         this.projectService = projectService;
     }
 
     @Override
     public boolean hasAccess(UUID projectId, UUID userId, EntityType entity, Action action) {
         return projectService.listUsersByProject(projectId).stream()
-            .filter(user -> user.getUserId().equals(userId))
-            .findFirst()
-            .map(user -> hasAccess(entity, action, user.getRole()))
-            .orElse(false);
+                .filter(user -> user.userId().equals(userId))
+                .findFirst()
+                .map(user -> hasAccess(entity, action, user.role()))
+                .orElse(false);
     }
 
     public boolean hasAccess(EntityType entity, Action action, Role role) {

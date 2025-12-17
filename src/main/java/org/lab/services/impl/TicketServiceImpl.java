@@ -11,6 +11,7 @@ import org.lab.entities.Ticket.Status;
 import org.lab.entities.User;
 import org.lab.exceptions.IllegalStatusException;
 import org.lab.exceptions.NoAccessException;
+import org.lab.exceptions.NotFoundException;
 import org.lab.services.AccessControlService;
 import org.lab.services.TicketService;
 
@@ -31,7 +32,7 @@ public class TicketServiceImpl implements TicketService {
 
     private final AccessControlService accessControlService;
 
-    TicketServiceImpl(AccessControlService accessControlService) {
+    public TicketServiceImpl(AccessControlService accessControlService) {
         this.accessControlService = accessControlService;
     }
 
@@ -43,17 +44,21 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void create(User user, Ticket ticket) {
-        checkAccess(user.getId(), ticket.getProjectId(), CREATE);
+    public Ticket create(User user, UUID projectId, UUID milestoneId, String name) {
+        checkAccess(user.getId(), projectId, CREATE);
+
+        var ticket = new Ticket(UUID.randomUUID(), projectId, name, milestoneId, Status.New);
 
         tickets.put(ticket.getId(), ticket);
+
+        return ticket;
     }
 
     @Override
     public void assignTicket(User user, UUID ticketId, UUID developerId) {
         var ticket = tickets.get(ticketId);
         if (ticket == null) {
-            throw new RuntimeException("not found");
+            throw new NotFoundException();
         }
 
         checkAccess(user.getId(), ticket.getProjectId(), UPDATE);
@@ -65,7 +70,7 @@ public class TicketServiceImpl implements TicketService {
     public Status getTicketStatus(User user, UUID ticketId) {
         var ticket = tickets.get(ticketId);
         if (ticket == null) {
-            throw new RuntimeException("not found");
+            throw new NotFoundException();
         }
 
         checkAccess(user.getId(), ticket.getProjectId(), READ);
@@ -77,7 +82,7 @@ public class TicketServiceImpl implements TicketService {
     public void setTicketStatus(User user, UUID ticketId, Status status) {
         var ticket = tickets.get(ticketId);
         if (ticket == null) {
-            throw new RuntimeException("not found");
+            throw new NotFoundException();
         }
 
         checkAccess(user.getId(), ticket.getProjectId(), UPDATE_STATUS);

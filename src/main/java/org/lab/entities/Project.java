@@ -12,11 +12,14 @@ public class Project {
 
     private final UUID createdBy;
 
+    private final String name;
+
     private final List<ProjectUser> users = new ArrayList<>();
 
-    public Project(UUID id, UUID createdBy) {
+    public Project(UUID id, UUID createdBy, String name) {
         this.id = id;
         this.createdBy = createdBy;
+        this.name = name;
     }
 
     public void addUser(ProjectUser user) {

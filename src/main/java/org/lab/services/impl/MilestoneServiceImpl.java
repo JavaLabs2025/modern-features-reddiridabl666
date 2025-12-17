@@ -15,6 +15,7 @@ import org.lab.entities.Milestone.Status;
 import org.lab.entities.User;
 import org.lab.exceptions.IllegalStatusException;
 import org.lab.exceptions.NoAccessException;
+import org.lab.exceptions.NotFoundException;
 import org.lab.services.AccessControlService;
 import org.lab.services.MilestoneService;
 import org.lab.services.TicketService;
@@ -31,23 +32,27 @@ public class MilestoneServiceImpl implements MilestoneService {
 
     private final TicketService ticketService;
 
-    MilestoneServiceImpl(AccessControlService accessControlService, TicketService ticketService) {
+    public MilestoneServiceImpl(AccessControlService accessControlService, TicketService ticketService) {
         this.accessControlService = accessControlService;
         this.ticketService = ticketService;
     }
 
     @Override
-    public void create(User user, Milestone milestone) {
-        checkAccess(user.getId(), milestone.getProjectId(), CREATE);
+    public Milestone create(User user, String name, UUID projectId) {
+        checkAccess(user.getId(), projectId, CREATE);
+
+        Milestone milestone = new Milestone(UUID.randomUUID(), projectId, name, Status.Open);
 
         milestones.put(milestone.getId(), milestone);
+
+        return milestone;
     }
 
     @Override
     public void setMilestoneStatus(User user, UUID milestoneId, Status status) {
         var milestone = milestones.get(milestoneId);
         if (milestone == null) {
-            throw new RuntimeException("not found");
+            throw new NotFoundException();
         }
 
         checkAccess(user.getId(), milestone.getProjectId(), UPDATE_STATUS);
