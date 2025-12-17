@@ -4,15 +4,18 @@ import java.util.List;
 import java.util.UUID;
 
 import org.lab.entities.Ticket;
+import org.lab.entities.User;
 
 public interface TicketService {
     List<Ticket> listAssignedTickets(UUID userId);
 
-    void create(Ticket ticket);
+    List<Ticket> listTicketsByMilestone(UUID milestoneId);
 
-    void assignTicket(UUID ticketId, UUID developerId);
+    void create(User user, Ticket ticket);
 
-    Ticket.Status getTicketStatus(UUID ticketId);
+    void assignTicket(User user, UUID ticketId, UUID developerId);
 
-    void setTicketStatus(UUID ticketId, Ticket.Status status);
+    Ticket.Status getTicketStatus(User user, UUID ticketId);
+
+    void setTicketStatus(User user, UUID ticketId, Ticket.Status status);
 }

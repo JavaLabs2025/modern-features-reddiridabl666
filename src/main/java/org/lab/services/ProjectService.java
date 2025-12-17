@@ -5,11 +5,12 @@ import java.util.UUID;
 
 import org.lab.entities.Project;
 import org.lab.entities.ProjectUser;
+import org.lab.entities.User;
 
 public interface ProjectService {
-    void create(Project project);
+    Project create(User user);
 
-    void addUser(UUID projectId, ProjectUser user);
+    void addUser(User requester, UUID projectId, ProjectUser user);
 
     List<ProjectUser> listUsersByProject(UUID projectId);
 

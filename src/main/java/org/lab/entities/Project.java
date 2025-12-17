@@ -5,10 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class Project {
     private final UUID id;
 

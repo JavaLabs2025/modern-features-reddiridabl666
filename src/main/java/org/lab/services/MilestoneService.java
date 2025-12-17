@@ -3,9 +3,10 @@ package org.lab.services;
 import java.util.UUID;
 
 import org.lab.entities.Milestone;
+import org.lab.entities.User;
 
 public interface MilestoneService {
-    void create(Milestone milestone);
+    void create(User user, Milestone milestone);
 
-    void setMilestoneStatus(UUID milestoneId, Milestone.Status status);
+    void setMilestoneStatus(User user, UUID milestoneId, Milestone.Status status);
 }
