@@ -31,8 +31,8 @@ public class ProjectServiceImpl implements ProjectService {
     public Project create(User user, String name) {
         var projectId = UUID.randomUUID();
 
-        var project = new Project(projectId, user.getId(), name);
-        project.addUser(new ProjectUser(projectId, user.getId(), Role.Manager));
+        var project = new Project(projectId, user.id(), name);
+        project.addUser(new ProjectUser(projectId, user.id(), Role.Manager));
 
         projects.put(projectId, project);
 
@@ -51,7 +51,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         boolean userExists = userService.listUsers().stream()
-                .filter(user -> user.getId().equals(userId))
+                .filter(user -> user.id().equals(userId))
                 .findFirst()
                 .isPresent();
 
@@ -59,7 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new NotFoundException();
         }
 
-        if (!project.getCreatedBy().equals(requester.getId())) {
+        if (!project.getCreatedBy().equals(requester.id())) {
             throw new NoAccessException(PROJECT, UPDATE, projectId);
         }
 

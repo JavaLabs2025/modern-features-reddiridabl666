@@ -55,7 +55,7 @@ public class BugReportServiceImpl implements BugReportService {
 
     @Override
     public BugReport create(User user, UUID projectId, String name) {
-        checkAccess(user.getId(), projectId, CREATE);
+        checkAccess(user.id(), projectId, CREATE);
 
         var bugReport = new BugReport(UUID.randomUUID(), projectId, name, Status.New);
 
@@ -71,7 +71,7 @@ public class BugReportServiceImpl implements BugReportService {
             throw new NotFoundException();
         }
 
-        checkAccess(user.getId(), bugReport.getProjectId(), READ);
+        checkAccess(user.id(), bugReport.getProjectId(), READ);
 
         return bugReport.getStatus();
     }
@@ -83,7 +83,7 @@ public class BugReportServiceImpl implements BugReportService {
             throw new NotFoundException();
         }
 
-        checkAccess(user.getId(), bugReport.getProjectId(), UPDATE_STATUS);
+        checkAccess(user.id(), bugReport.getProjectId(), UPDATE_STATUS);
 
         Status allowedStatus = ALLOWED_STATUS_CHANGE_MAP.get(bugReport.getStatus());
         if (!allowedStatus.equals(status)) {

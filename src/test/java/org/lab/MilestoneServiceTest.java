@@ -73,7 +73,7 @@ public class MilestoneServiceTest {
     @ParameterizedTest
     @EnumSource(value = Role.class, names = { "Developer", "QA", "Teamlead" })
     void shouldNotAllowMilestoneCreation(Role role) {
-        projectService.addUser(requester, project.getId(), otherUser.getId(), role);
+        projectService.addUser(requester, project.getId(), otherUser.id(), role);
 
         assertThrows(NoAccessException.class, () -> {
             milestoneService.create(otherUser, "test milestone", project.getId());

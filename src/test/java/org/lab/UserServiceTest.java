@@ -22,10 +22,10 @@ public class UserServiceTest {
         assertThat(users).hasSize(0);
 
         var user = userService.register("new user");
-        assertThat(user).extracting(User::getName).isEqualTo("new user");
+        assertThat(user).extracting(User::name).isEqualTo("new user");
 
         users = userService.listUsers();
         assertThat(users).hasSize(1);
-        assertThat(users).first().extracting(User::getName).isEqualTo("new user");
+        assertThat(users).first().extracting(User::name).isEqualTo("new user");
     }
 }

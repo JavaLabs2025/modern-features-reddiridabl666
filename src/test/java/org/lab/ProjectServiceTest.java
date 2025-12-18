@@ -40,9 +40,9 @@ public class ProjectServiceTest {
 
     @Test
     void shouldCreateProject() {
-        var projectUser = new ProjectUser(createdProject.getId(), requester.getId(), Role.Manager);
+        var projectUser = new ProjectUser(createdProject.getId(), requester.id(), Role.Manager);
 
-        var projectsByUser = projectService.listProjectsByUser(requester.getId());
+        var projectsByUser = projectService.listProjectsByUser(requester.id());
 
         assertThat(projectsByUser).hasSize(1);
         assertThat(projectsByUser).first().isEqualTo(projectUser);
@@ -55,36 +55,36 @@ public class ProjectServiceTest {
 
     @Test
     void shouldAddUser() {
-        projectService.addUser(requester, createdProject.getId(), otherUser.getId(), Role.Developer);
+        projectService.addUser(requester, createdProject.getId(), otherUser.id(), Role.Developer);
 
         var projectUsers = projectService.listUsersByProject(createdProject.getId());
 
         assertThat(projectUsers).hasSize(2);
-        assertThat(projectUsers).contains(new ProjectUser(createdProject.getId(), otherUser.getId(), Role.Developer));
+        assertThat(projectUsers).contains(new ProjectUser(createdProject.getId(), otherUser.id(), Role.Developer));
     }
 
     @Test
     void shouldNotAddUserForNonManagers() {
         assertThrows(NoAccessException.class, () -> {
-            projectService.addUser(otherUser, createdProject.getId(), otherUser.getId(), Role.Developer);
+            projectService.addUser(otherUser, createdProject.getId(), otherUser.id(), Role.Developer);
         });
     }
 
     @Test
     void shouldNotAddManager() {
         assertThrows(IllegalArgumentException.class, () -> {
-            projectService.addUser(requester, createdProject.getId(), otherUser.getId(), Role.Manager);
+            projectService.addUser(requester, createdProject.getId(), otherUser.id(), Role.Manager);
         });
     }
 
     @Test
     void shouldNotAddTeamleadTwice() {
-        projectService.addUser(requester, createdProject.getId(), otherUser.getId(), Role.Teamlead);
+        projectService.addUser(requester, createdProject.getId(), otherUser.id(), Role.Teamlead);
 
         User thirdUser = userService.register("second user");
 
         assertThrows(IllegalArgumentException.class, () -> {
-            projectService.addUser(requester, createdProject.getId(), thirdUser.getId(), Role.Teamlead);
+            projectService.addUser(requester, createdProject.getId(), thirdUser.id(), Role.Teamlead);
         });
     }
 }

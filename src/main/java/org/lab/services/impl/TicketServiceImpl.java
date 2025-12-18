@@ -45,7 +45,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public Ticket create(User user, UUID projectId, UUID milestoneId, String name) {
-        checkAccess(user.getId(), projectId, CREATE);
+        checkAccess(user.id(), projectId, CREATE);
 
         var ticket = new Ticket(UUID.randomUUID(), projectId, name, milestoneId, Status.New);
 
@@ -61,7 +61,7 @@ public class TicketServiceImpl implements TicketService {
             throw new NotFoundException();
         }
 
-        checkAccess(user.getId(), ticket.getProjectId(), UPDATE);
+        checkAccess(user.id(), ticket.getProjectId(), UPDATE);
 
         ticket.assign(developerId);
     }
@@ -73,7 +73,7 @@ public class TicketServiceImpl implements TicketService {
             throw new NotFoundException();
         }
 
-        checkAccess(user.getId(), ticket.getProjectId(), READ);
+        checkAccess(user.id(), ticket.getProjectId(), READ);
 
         return ticket.getStatus();
     }
@@ -85,7 +85,7 @@ public class TicketServiceImpl implements TicketService {
             throw new NotFoundException();
         }
 
-        checkAccess(user.getId(), ticket.getProjectId(), UPDATE_STATUS);
+        checkAccess(user.id(), ticket.getProjectId(), UPDATE_STATUS);
 
         Status allowedStatus = ALLOWED_STATUS_CHANGE_MAP.get(ticket.getStatus());
         if (!allowedStatus.equals(status)) {

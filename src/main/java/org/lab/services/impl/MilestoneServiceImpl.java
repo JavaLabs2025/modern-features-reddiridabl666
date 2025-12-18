@@ -39,7 +39,7 @@ public class MilestoneServiceImpl implements MilestoneService {
 
     @Override
     public Milestone create(User user, String name, UUID projectId) {
-        checkAccess(user.getId(), projectId, CREATE);
+        checkAccess(user.id(), projectId, CREATE);
 
         Milestone milestone = new Milestone(UUID.randomUUID(), projectId, name, Status.Open);
 
@@ -55,7 +55,7 @@ public class MilestoneServiceImpl implements MilestoneService {
             throw new NotFoundException();
         }
 
-        checkAccess(user.getId(), milestone.getProjectId(), UPDATE_STATUS);
+        checkAccess(user.id(), milestone.getProjectId(), UPDATE_STATUS);
 
         Status allowedStatus = ALLOWED_STATUS_CHANGE_MAP.get(milestone.getStatus());
         if (!allowedStatus.equals(status)) {
