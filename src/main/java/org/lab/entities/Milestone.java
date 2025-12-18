@@ -10,13 +10,10 @@ import lombok.Setter;
 public final class Milestone extends ProjectEntity {
     private Status status;
 
-    private String name;
-
     public Milestone(UUID id, UUID projectId, String name, Status status) {
-        super(id, projectId);
+        super(id, projectId, name);
 
         this.status = status;
-        this.name = name;
     }
 
     public static enum Status {

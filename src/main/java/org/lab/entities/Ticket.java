@@ -10,8 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public final class Ticket extends ProjectEntity {
-    private final String name;
-
     private final UUID milestoneId;
 
     private final Set<UUID> assigned = new HashSet<>();
@@ -19,10 +17,9 @@ public final class Ticket extends ProjectEntity {
     private Status status;
 
     public Ticket(UUID id, UUID projectId, String name, UUID milestoneId, Status status) {
-        super(id, projectId);
+        super(id, projectId, name);
         this.status = status;
         this.milestoneId = milestoneId;
-        this.name = name;
     }
 
     public static enum Status {

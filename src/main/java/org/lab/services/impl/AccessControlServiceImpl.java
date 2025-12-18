@@ -24,7 +24,7 @@ public class AccessControlServiceImpl implements AccessControlService {
     private static final Map<Role, Map<EntityType, Set<Action>>> roleModel = Map.of(
             Role.Teamlead, Map.of(
                     MILESTONE, Set.of(READ),
-                    BUG_REPORT, Set.of(READ),
+                    BUG_REPORT, Set.of(CREATE, READ, UPDATE_STATUS),
                     TICKET, Set.of(CREATE, READ, UPDATE, UPDATE_STATUS)),
             Role.Manager, Map.of(
                     MILESTONE, Set.of(CREATE, READ, UPDATE, UPDATE_STATUS),

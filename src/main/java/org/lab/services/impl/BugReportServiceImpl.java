@@ -12,7 +12,6 @@ import java.util.UUID;
 
 import org.lab.entities.Action;
 import org.lab.entities.BugReport;
-import org.lab.entities.Role;
 import org.lab.entities.User;
 import org.lab.exceptions.IllegalStatusException;
 import org.lab.exceptions.NoAccessException;
@@ -45,7 +44,7 @@ public class BugReportServiceImpl implements BugReportService {
         var projectUsers = projectService.listProjectsByUser(userId);
 
         var projectIds = projectUsers.stream()
-                .filter(item -> item.role() == Role.Developer)
+                .filter(item -> item.userId().equals(userId))
                 .map(item -> item.projectId())
                 .toList();
 
@@ -55,10 +54,14 @@ public class BugReportServiceImpl implements BugReportService {
     }
 
     @Override
-    public void create(User user, BugReport bugReport) {
-        checkAccess(user.getId(), bugReport.getProjectId(), CREATE);
+    public BugReport create(User user, UUID projectId, String name) {
+        checkAccess(user.getId(), projectId, CREATE);
+
+        var bugReport = new BugReport(UUID.randomUUID(), projectId, name, Status.New);
 
         bugReports.put(bugReport.getId(), bugReport);
+
+        return bugReport;
     }
 
     @Override

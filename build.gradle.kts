@@ -3,6 +3,8 @@ plugins {
     id("application")
 
     id("io.freefair.lombok") version "9.1.0"
+
+    id("jacoco")
 }
 
 java {
@@ -37,4 +39,10 @@ tasks.test {
 
         setExceptionFormat("full")
     }
+
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
 }
